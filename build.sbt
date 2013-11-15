@@ -12,8 +12,6 @@ git.baseVersion := "1.0"
 
 versionWithGit
 
-scriptedLaunchOpts <+= version apply { v => "-Dproject.version="+v }
-
 initialCommands :=
   """| import com.typesafe.sbt.pom._
      | import sbt._
@@ -25,6 +23,10 @@ initialCommands :=
 scriptedSettings
 
 scriptedLaunchOpts <+= version apply { v => "-Dproject.version="+v }
+
+scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
+  a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
+)
 
 publishTo <<= (version) { v =>
   def scalasbt(repo: String) = ("scalasbt " + repo, "http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-" + repo)
